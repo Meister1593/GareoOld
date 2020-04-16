@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Fonts/Arimo/Arimo-Regular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Scripts/Lobby/SteamMenuLobby.cs" type="Script" id=2]
+
+[node name="Menu" type="Node"]
+
+[node name="Scripts" type="Node" parent="."]
+
+[node name="SteamMenuLobby" type="Node" parent="Scripts"]
+script = ExtResource( 2 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 1280.0
+margin_bottom = 736.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GareoLabel" type="Label" parent="Control"]
+anchor_left = 0.375
+anchor_top = 0.261
+anchor_right = 0.625
+anchor_bottom = 0.348
+margin_left = -3.05176e-05
+margin_top = -0.0960083
+margin_bottom = -0.128021
+custom_fonts/font = ExtResource( 1 )
+text = "Gareo"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StartGame" type="Button" parent="Control"]
+anchor_left = 0.375
+anchor_top = 0.391
+anchor_right = 0.625
+anchor_bottom = 0.478
+margin_left = -3.05176e-05
+margin_top = 0.223969
+margin_bottom = 0.191986
+custom_fonts/font = ExtResource( 1 )
+text = "Start Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExitGame" type="Button" parent="Control"]
+anchor_left = 0.375
+anchor_top = 0.565
+anchor_right = 0.625
+anchor_bottom = 0.652
+margin_left = -3.05176e-05
+margin_top = 0.160004
+margin_bottom = 0.127991
+custom_fonts/font = ExtResource( 1 )
+text = "Exit Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="Control/StartGame" to="Scripts/SteamMenuLobby" method="_on_StartGame_pressed"]
+[connection signal="pressed" from="Control/ExitGame" to="Scripts/SteamMenuLobby" method="_on_ExitGame_pressed"]

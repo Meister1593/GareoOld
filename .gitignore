@@ -1,0 +1,25 @@
+/[Bb]uilds/*
+!/[Bb]uilds/Linux steam files
+!/[Bb]uilds/Windows steam files
+
+# Godot import metafiles
+.import
+*.import
+
+# Exclude rider idea data
+.idea
+
+# Temp files for c# @TODO to be reworked
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# Builds
+*.apk
