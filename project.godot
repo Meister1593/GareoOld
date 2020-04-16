@@ -16,13 +16,14 @@ _global_script_class_icons={
 [application]
 
 config/name="Gareo"
-run/main_scene="res://Scenes/Menu.tscn"
+run/main_scene="res://Scenes/Menu/Menu.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 SteamValidation="*res://Scripts/SteamValidation.cs"
 Globals="*res://Scripts/Lobby/Globals.cs"
+SteamMenuLobby="*res://Scripts/Lobby/SteamMenuLobby.cs"
 
 [display]
 

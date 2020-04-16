@@ -10,6 +10,7 @@ namespace Gareo.Scripts.Lobby
         public bool IsGameStarted { get; set; }
         public bool PlayingAsHost { get; set; }
 
+        public KinematicBody OwnPlayer { get; set; }
         public CSteamID LobbyId { get; set; } = CSteamID.Nil;
         public CSteamID HostId { get; set; } = CSteamID.Nil;
         public CSteamID OwnId { get; set; } = CSteamID.Nil;
@@ -19,6 +20,7 @@ namespace Gareo.Scripts.Lobby
         {
             IsGameStarted = false;
             PlayingAsHost = false;
+            OwnPlayer = null;
             LobbyId = CSteamID.Nil;
             HostId = CSteamID.Nil;
             UserIds.Clear();

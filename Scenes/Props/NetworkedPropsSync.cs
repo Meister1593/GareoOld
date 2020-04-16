@@ -9,18 +9,18 @@ namespace Gareo.Scenes.Props
 {
     public class NetworkedPropsSync : Node
     {
-        [Export(PropertyHint.File, "*.tscn")] public NodePath NetworkBoxPath;
+        [Export(PropertyHint.File, "*.tscn")] public string NetworkBoxPath;
 
         [Export(PropertyHint.Range, "Vector3")]
         public Vector3 DefaultSpawnPos;
 
         private Globals _globals;
-        public Dictionary<string, KinematicBody> _props;
+        public Dictionary<string, KinematicBody> Props;
 
         public override void _Ready()
         {
             DefaultSpawnPos = Vector3.Zero;
-            _props = new Dictionary<string, KinematicBody>();
+            Props = new Dictionary<string, KinematicBody>();
             _globals = GetNode<Globals>("/root/Globals");
         }
 
@@ -55,13 +55,12 @@ namespace Gareo.Scenes.Props
                 case Packets.ObjectMovementAndRotation:
                 case Packets.ObjectMovement:
                 case Packets.ObjectRotation:
-                {
-                    ProcessIncomingObjectChange(packetHolder);
+                    ProcessIncomingObject(packetHolder);
                     break;
-                }
             }
         }
 
+        //------------    Process packet related to spawning prop    ------------
         private void ProcessIncomingSpawn(CSteamID remoteId, PacketHolder packetHolder)
         {
             var packet = packetHolder.Packet<Spawn>();
@@ -76,7 +75,7 @@ namespace Gareo.Scenes.Props
                     if (prop == null) return;
 
                     AddChild(prop);
-                    _props.Add(prop.Name, prop);
+                    Props.Add(prop.Name, prop);
                     prop.Name = packet.Value.Name;
                     if (packet.Value.Pos != null)
                     {
@@ -100,7 +99,8 @@ namespace Gareo.Scenes.Props
             }
         }
 
-        private void ProcessIncomingObjectChange(PacketHolder packetHolder)
+        //------------    Process packet related to any object movement    ------------
+        private void ProcessIncomingObject(PacketHolder packetHolder)
         {
             switch (packetHolder.PacketType)
             {
@@ -111,7 +111,7 @@ namespace Gareo.Scenes.Props
                 }
                 case Packets.ObjectMovement:
                 {
-                    ProcessIncomingObjectPositionChange(packetHolder);
+                    ProcessIncomingObjectMovementChange(packetHolder);
                     break;
                 }
                 case Packets.ObjectRotation:
@@ -122,13 +122,14 @@ namespace Gareo.Scenes.Props
             }
         }
 
+        //------------    Process packet related to both changing position and rotation at once    ------------
 
         private void ProcessIncomingObjectPositionAndRotationChange(PacketHolder packetHolder)
         {
             var packet = packetHolder.Packet<ObjectMovementAndRotation>();
             if (packet == null) return;
 
-            KinematicBody updatingObj = _props[packet.Value.Obj] as KinematicBody;
+            KinematicBody updatingObj = Props[packet.Value.Obj];
             if (updatingObj == null) return;
 
             Transform newObjTransform = updatingObj.Transform;
@@ -152,12 +153,13 @@ namespace Gareo.Scenes.Props
             updatingObj.Rotation = newObjRotation;
         }
 
-        private void ProcessIncomingObjectPositionChange(PacketHolder packetHolder)
+        //------------    Process packet related to only changing object position    ------------
+        private void ProcessIncomingObjectMovementChange(PacketHolder packetHolder)
         {
             var packet = packetHolder.Packet<ObjectMovement>();
             if (packet == null) return;
 
-            KinematicBody updatingObj = _props[packet.Value.Obj] as KinematicBody;
+            KinematicBody updatingObj = Props[packet.Value.Obj];
             if (updatingObj == null) return;
 
             Transform newObjTransform = updatingObj.Transform;
@@ -171,12 +173,13 @@ namespace Gareo.Scenes.Props
             updatingObj.Transform = newObjTransform;
         }
 
+        //------------    Process packet related to only changing object rotation    ------------
         private void ProcessIncomingObjectRotationChange(PacketHolder packetHolder)
         {
             var packet = packetHolder.Packet<ObjectRotation>();
             if (packet == null) return;
 
-            KinematicBody updatingObj = _props[packet.Value.Obj] as KinematicBody;
+            KinematicBody updatingObj = Props[packet.Value.Obj];
             if (updatingObj == null) return;
 
             Vector3 newObjRotation = updatingObj.Rotation;

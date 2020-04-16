@@ -158,19 +158,15 @@ namespace Gareo.Scripts.Lobby
             switch (userAction.Value.Action)
             {
                 case ActionType.PlayerIds:
-                    if (_globals.PlayingAsHost)
-                    {
-                        
-                        var sendingUsers = new HashSet<CSteamID>(_globals.UserIds);
-                        sendingUsers.RemoveWhere(id => id.Equals(remoteId));
-                        if (sendingUsers.Count == 0) return;
+                    var sendingUsers = new HashSet<CSteamID>(_globals.UserIds);
+                    sendingUsers.RemoveWhere(id => id.Equals(remoteId));
+                    if (sendingUsers.Count == 0) return;
 
-                        var packet = Utils.GetPlayerIdsBytes(sendingUsers);
-                        SteamNetworking.SendP2PPacket(remoteId, packet, (uint) packet.Length,
-                            EP2PSend.k_EP2PSendReliable);
-                        GD.Print($"Sent user list from host to: {SteamFriends.GetFriendPersonaName(remoteId)}");
-                    }
-
+                    var packet = Utils.GetPlayerIdsBytes(sendingUsers);
+                    SteamNetworking.SendP2PPacket(remoteId, packet, (uint) packet.Length,
+                        EP2PSend.k_EP2PSendReliable);
+                    GD.Print($"Sent user list from host to: {SteamFriends.GetFriendPersonaName(remoteId)}");
+                    
                     break;
             }
         }
@@ -184,20 +180,6 @@ namespace Gareo.Scripts.Lobby
                 Array.ConvertAll(incomingPlayerIds.Value.GetIdsArray(), item => (CSteamID) item);
             _globals.UserIds.UnionWith(newIncomingPlayerIds);
             GD.Print($"Added lobby player id's from host, new count: {_globals.UserIds.Count}");
-        }
-        
-        // When pressed StartGame button, it tries to create Steam lobby
-        private void _on_StartGame_pressed()
-        {
-            SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, _globals.MaxPlayers);
-            GD.Print("OK: Created Steam lobby");
-        }
-
-        // When pressed ExitGame button, it shutdowns this game SteamApi (not whole steam) and exits game.
-        private void _on_ExitGame_pressed()
-        {
-            GD.Print("OK: Shutting down game");
-            GetTree().Quit();
         }
     }
 }
