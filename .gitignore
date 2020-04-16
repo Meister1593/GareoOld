@@ -1,6 +1,10 @@
+# Build folder
 /[Bb]uilds/*
 !/[Bb]uilds/Linux steam files
 !/[Bb]uilds/Windows steam files
+
+# Mono metadata
+.mono/metadata
 
 # Godot import metafiles
 .import
@@ -17,9 +21,6 @@
 *.pidb
 *.booproj
 *.svd
-
-# Unity3D Generated File On Crash Reports
-sysinfo.txt
 
 # Builds
 *.apk
