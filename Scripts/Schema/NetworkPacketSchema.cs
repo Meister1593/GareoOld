@@ -12,8 +12,11 @@ using global::FlatBuffers;
 public enum ActionType : byte
 {
   PlayerIds = 0,
-  PlayerSpawn = 1,
-  PlayerSpawnCallback = 2,
+  PlayerIdsCallback = 1,
+  PlayerSpawn = 2,
+  PlayerSpawnCallback = 3,
+  PropSpawn = 4,
+  PropSpawnCallback = 5,
 };
 
 public enum Packets : byte
@@ -22,9 +25,13 @@ public enum Packets : byte
   ObjectMovementAndRotation = 1,
   ObjectMovement = 2,
   ObjectRotation = 3,
-  PlayerIds = 4,
-  UserAction = 5,
-  SceneChange = 6,
+  PlayerMovementAndRotation = 4,
+  PlayerMovement = 5,
+  PlayerRotation = 6,
+  PlayerIds = 7,
+  Spawn = 8,
+  UserAction = 9,
+  SceneChange = 10,
 };
 
 public struct Vec3 : IFlatbufferObject
@@ -57,12 +64,18 @@ public struct ObjectMovementAndRotation : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public ObjectMovementAndRotation __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public uint Obj { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
   public NetworkPacket.Vec3? Pos { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
   public NetworkPacket.Vec3? Rot { get { int o = __p.__offset(8); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
   public static void StartObjectMovementAndRotation(FlatBufferBuilder builder) { builder.StartTable(3); }
-  public static void AddObj(FlatBufferBuilder builder, uint obj) { builder.AddUint(0, obj, 0); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
   public static void AddPos(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> posOffset) { builder.AddStruct(1, posOffset.Value, 0); }
   public static void AddRot(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> rotOffset) { builder.AddStruct(2, rotOffset.Value, 0); }
   public static Offset<NetworkPacket.ObjectMovementAndRotation> EndObjectMovementAndRotation(FlatBufferBuilder builder) {
@@ -81,11 +94,17 @@ public struct ObjectMovement : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public ObjectMovement __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public uint Obj { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
   public NetworkPacket.Vec3? Pos { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
   public static void StartObjectMovement(FlatBufferBuilder builder) { builder.StartTable(2); }
-  public static void AddObj(FlatBufferBuilder builder, uint obj) { builder.AddUint(0, obj, 0); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
   public static void AddPos(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> posOffset) { builder.AddStruct(1, posOffset.Value, 0); }
   public static Offset<NetworkPacket.ObjectMovement> EndObjectMovement(FlatBufferBuilder builder) {
     int o = builder.EndTable();
@@ -103,15 +122,107 @@ public struct ObjectRotation : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public ObjectRotation __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public uint Obj { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
   public NetworkPacket.Vec3? Rot { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
 
   public static void StartObjectRotation(FlatBufferBuilder builder) { builder.StartTable(2); }
-  public static void AddObj(FlatBufferBuilder builder, uint obj) { builder.AddUint(0, obj, 0); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
   public static void AddRot(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> rotOffset) { builder.AddStruct(1, rotOffset.Value, 0); }
   public static Offset<NetworkPacket.ObjectRotation> EndObjectRotation(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<NetworkPacket.ObjectRotation>(o);
+  }
+};
+
+public struct PlayerMovementAndRotation : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
+  public static PlayerMovementAndRotation GetRootAsPlayerMovementAndRotation(ByteBuffer _bb) { return GetRootAsPlayerMovementAndRotation(_bb, new PlayerMovementAndRotation()); }
+  public static PlayerMovementAndRotation GetRootAsPlayerMovementAndRotation(ByteBuffer _bb, PlayerMovementAndRotation obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public PlayerMovementAndRotation __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
+  public NetworkPacket.Vec3? Pos { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+  public NetworkPacket.Vec3? Rot { get { int o = __p.__offset(8); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+
+  public static void StartPlayerMovementAndRotation(FlatBufferBuilder builder) { builder.StartTable(3); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
+  public static void AddPos(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> posOffset) { builder.AddStruct(1, posOffset.Value, 0); }
+  public static void AddRot(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> rotOffset) { builder.AddStruct(2, rotOffset.Value, 0); }
+  public static Offset<NetworkPacket.PlayerMovementAndRotation> EndPlayerMovementAndRotation(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<NetworkPacket.PlayerMovementAndRotation>(o);
+  }
+};
+
+public struct PlayerMovement : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
+  public static PlayerMovement GetRootAsPlayerMovement(ByteBuffer _bb) { return GetRootAsPlayerMovement(_bb, new PlayerMovement()); }
+  public static PlayerMovement GetRootAsPlayerMovement(ByteBuffer _bb, PlayerMovement obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public PlayerMovement __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
+  public NetworkPacket.Vec3? Pos { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+
+  public static void StartPlayerMovement(FlatBufferBuilder builder) { builder.StartTable(2); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
+  public static void AddPos(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> posOffset) { builder.AddStruct(1, posOffset.Value, 0); }
+  public static Offset<NetworkPacket.PlayerMovement> EndPlayerMovement(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<NetworkPacket.PlayerMovement>(o);
+  }
+};
+
+public struct PlayerRotation : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
+  public static PlayerRotation GetRootAsPlayerRotation(ByteBuffer _bb) { return GetRootAsPlayerRotation(_bb, new PlayerRotation()); }
+  public static PlayerRotation GetRootAsPlayerRotation(ByteBuffer _bb, PlayerRotation obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public PlayerRotation __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public string Obj { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetObjBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetObjBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetObjArray() { return __p.__vector_as_array<byte>(4); }
+  public NetworkPacket.Vec3? Rot { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+
+  public static void StartPlayerRotation(FlatBufferBuilder builder) { builder.StartTable(2); }
+  public static void AddObj(FlatBufferBuilder builder, StringOffset objOffset) { builder.AddOffset(0, objOffset.Value, 0); }
+  public static void AddRot(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> rotOffset) { builder.AddStruct(1, rotOffset.Value, 0); }
+  public static Offset<NetworkPacket.PlayerRotation> EndPlayerRotation(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<NetworkPacket.PlayerRotation>(o);
   }
 };
 
@@ -149,6 +260,36 @@ public struct PlayerIds : IFlatbufferObject
   public static Offset<NetworkPacket.PlayerIds> EndPlayerIds(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<NetworkPacket.PlayerIds>(o);
+  }
+};
+
+public struct Spawn : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_1_12_0(); }
+  public static Spawn GetRootAsSpawn(ByteBuffer _bb) { return GetRootAsSpawn(_bb, new Spawn()); }
+  public static Spawn GetRootAsSpawn(ByteBuffer _bb, Spawn obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public Spawn __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public string Name { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetNameArray() { return __p.__vector_as_array<byte>(4); }
+  public NetworkPacket.ActionType Action { get { int o = __p.__offset(6); return o != 0 ? (NetworkPacket.ActionType)__p.bb.Get(o + __p.bb_pos) : NetworkPacket.ActionType.PlayerIds; } }
+  public NetworkPacket.Vec3? Pos { get { int o = __p.__offset(8); return o != 0 ? (NetworkPacket.Vec3?)(new NetworkPacket.Vec3()).__assign(o + __p.bb_pos, __p.bb) : null; } }
+
+  public static void StartSpawn(FlatBufferBuilder builder) { builder.StartTable(3); }
+  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(0, nameOffset.Value, 0); }
+  public static void AddAction(FlatBufferBuilder builder, NetworkPacket.ActionType action) { builder.AddByte(1, (byte)action, 0); }
+  public static void AddPos(FlatBufferBuilder builder, Offset<NetworkPacket.Vec3> posOffset) { builder.AddStruct(2, posOffset.Value, 0); }
+  public static Offset<NetworkPacket.Spawn> EndSpawn(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<NetworkPacket.Spawn>(o);
   }
 };
 

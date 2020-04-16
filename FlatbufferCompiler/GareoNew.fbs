@@ -1,0 +1,85 @@
+namespace NetworkPacket;
+ 
+struct Vec3 {
+    x:float;
+    y:float;
+    z:float;
+}
+
+enum ActionType : ubyte {
+    PlayerIds,
+    PlayerIdsCallback,
+    PlayerSpawn,
+    PlayerSpawnCallback,
+    PropSpawn,
+    PropSpawnCallback
+}
+ 
+table ObjectMovementAndRotation{
+    obj:string;
+    pos:Vec3;
+    rot:Vec3;
+}
+
+table ObjectMovement{
+    obj:string;
+    pos:Vec3;
+}
+
+table ObjectRotation{
+    obj:string;
+    rot:Vec3;
+}
+
+table PlayerMovementAndRotation{
+    obj:string;
+    pos:Vec3;
+    rot:Vec3;
+}
+
+table PlayerMovement{
+    obj:string;
+    pos:Vec3;
+}
+
+table PlayerRotation{
+    obj:string;
+    rot:Vec3;
+}
+ 
+table PlayerIds {
+    ids:[ulong];
+}
+
+table Spawn {
+    name:string;
+    action:ActionType;
+    pos:Vec3;
+}
+
+table UserAction {
+    action:ActionType;
+}
+
+table SceneChange {
+    scene:string;
+}
+
+union Packets {
+    ObjectMovementAndRotation,
+    ObjectMovement,
+    ObjectRotation,
+    PlayerMovementAndRotation,
+    PlayerMovement,
+    PlayerRotation,
+    PlayerIds,
+    Spawn,
+    UserAction,
+    SceneChange
+}
+ 
+table PacketHolder {
+    packet:Packets;
+}
+
+root_type PacketHolder;
