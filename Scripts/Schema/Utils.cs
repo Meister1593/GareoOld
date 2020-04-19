@@ -9,108 +9,124 @@ namespace NetworkPacket
 {
     public static class Utils
     {
-        public static byte[] GetObjectMovementAndRotationBytes(string objName, Vector3 pos, Vector3 rot)
+        public static byte[] GetPropMovementAndRotationBytes(bool sentByHost, string objName, Vector3 pos,
+            Vector3 rot)
+        {
+            FlatBufferBuilder builder = CreateMovementAndRotationBuilder(sentByHost, objName, pos, rot);
+            MovementAndRotation.AddObjType(builder, ObjectType.Prop);
+            var objPacketOffset = MovementAndRotation.EndMovementAndRotation(builder);
+
+            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.MovementAndRotation);
+        }
+
+        private static FlatBufferBuilder CreateMovementAndRotationBuilder(bool sentByHost, string objName, Vector3 pos,
+            Vector3 rot)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
-
-            ObjectMovementAndRotation.StartObjectMovementAndRotation(builder);
-            ObjectMovementAndRotation.AddObj(builder, builder.CreateString(objName));
+            var objNameOffset = builder.CreateString(objName);
+            MovementAndRotation.StartMovementAndRotation(builder);
+            MovementAndRotation.AddSentByHost(builder, sentByHost);
+            MovementAndRotation.AddObj(builder, objNameOffset);
             var objPosOffset = Vec3.CreateVec3(builder, pos.x, pos.y, pos.z);
-            ObjectMovementAndRotation.AddPos(builder, objPosOffset);
+            MovementAndRotation.AddPos(builder, objPosOffset);
             var objRotOffset = Vec3.CreateVec3(builder, rot.x, rot.y, rot.z);
-            ObjectMovementAndRotation.AddRot(builder, objRotOffset);
-            var objPacketOffset = ObjectMovementAndRotation.EndObjectMovementAndRotation(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectMovementAndRotation);
+            MovementAndRotation.AddRot(builder, objRotOffset);
+            return builder;
         }
 
 
-        public static byte[] GetObjectMovementBytes(string objName, Vector3 pos)
+        public static byte[] GetObjectMovementBytes(bool sentByHost, string objName, Vector3 pos)
+        {
+            FlatBufferBuilder builder = CreateMovementBuilder(sentByHost, objName, pos);
+            Movement.AddObjType(builder, ObjectType.Prop);
+            var objPacketOffset = Movement.EndMovement(builder);
+
+            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.Movement);
+        }
+
+        private static FlatBufferBuilder CreateMovementBuilder(bool sentByHost, string objName, Vector3 pos)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
-
-            ObjectMovement.StartObjectMovement(builder);
-            ObjectMovement.AddObj(builder, builder.CreateString(objName));
+            var objNameOffset = builder.CreateString(objName);
+            MovementAndRotation.StartMovementAndRotation(builder);
+            MovementAndRotation.AddSentByHost(builder, sentByHost);
+            MovementAndRotation.AddObj(builder, objNameOffset);
             var objPosOffset = Vec3.CreateVec3(builder, pos.x, pos.y, pos.z);
-            ObjectMovement.AddPos(builder, objPosOffset);
-            var objPacketOffset = ObjectMovement.EndObjectMovement(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectMovement);
+            MovementAndRotation.AddPos(builder, objPosOffset);
+            return builder;
         }
 
-        public static byte[] GetObjectRotationBytes(string objName, Vector3 rot)
+        public static byte[] GetObjectRotationBytes(bool sentByHost, string objName, Vector3 rot)
         {
-            FlatBufferBuilder builder = new FlatBufferBuilder(8);
+            FlatBufferBuilder builder = CreateRotationBuilder(sentByHost, objName, rot);
+            Rotation.AddObjType(builder, ObjectType.Prop);
+            var objPacketOffset = Rotation.EndRotation(builder);
 
-            ObjectRotation.StartObjectRotation(builder);
-            ObjectRotation.AddObj(builder, builder.CreateString(objName));
-            var objPosOffset = Vec3.CreateVec3(builder, rot.x, rot.y, rot.z);
-            ObjectRotation.AddRot(builder, objPosOffset);
-            var objPacketOffset = ObjectRotation.EndObjectRotation(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectRotation);
+            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.Rotation);
         }
-        public static byte[] GetPlayerMovementAndRotationBytes(string playerName, Vector3 pos, Vector3 rot)
+
+        private static FlatBufferBuilder CreateRotationBuilder(bool sentByHost, string objName, Vector3 rot)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
-
-            PlayerMovementAndRotation.StartPlayerMovementAndRotation(builder);
-            PlayerMovementAndRotation.AddObj(builder, builder.CreateString(playerName));
-            var objPosOffset = Vec3.CreateVec3(builder, pos.x, pos.y, pos.z);
-            PlayerMovementAndRotation.AddPos(builder, objPosOffset);
+            var objNameOffset = builder.CreateString(objName);
+            MovementAndRotation.StartMovementAndRotation(builder);
+            MovementAndRotation.AddSentByHost(builder, sentByHost);
+            MovementAndRotation.AddObj(builder, objNameOffset);
             var objRotOffset = Vec3.CreateVec3(builder, rot.x, rot.y, rot.z);
-            PlayerMovementAndRotation.AddRot(builder, objRotOffset);
-            var objPacketOffset = PlayerMovementAndRotation.EndPlayerMovementAndRotation(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectMovementAndRotation);
+            MovementAndRotation.AddRot(builder, objRotOffset);
+            return builder;
         }
 
-
-        public static byte[] GetPlayerMovementBytes(string playerName, Vector3 pos)
+        public static byte[] GetPlayerMovementAndRotationBytes(bool sentByHost, string playerName, Vector3 pos,
+            Vector3 rot)
         {
-            FlatBufferBuilder builder = new FlatBufferBuilder(8);
+            FlatBufferBuilder builder = CreateMovementAndRotationBuilder(sentByHost, playerName, pos, rot);
+            MovementAndRotation.AddObjType(builder, ObjectType.Player);
+            var playerPacketOffset = MovementAndRotation.EndMovementAndRotation(builder);
 
-            PlayerMovement.StartPlayerMovement(builder);
-            PlayerMovement.AddObj(builder, builder.CreateString(playerName));
-            var objPosOffset = Vec3.CreateVec3(builder, pos.x, pos.y, pos.z);
-            PlayerMovement.AddPos(builder, objPosOffset);
-            var objPacketOffset = PlayerMovement.EndPlayerMovement(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectMovement);
+            return GetPacketHolderBytes(builder, playerPacketOffset.Value, Packets.MovementAndRotation);
         }
 
-        public static byte[] GetPlayerRotationBytes(string playerName, Vector3 rot)
+
+        public static byte[] GetPlayerMovementBytes(bool sentByHost, string playerName, Vector3 pos)
         {
-            FlatBufferBuilder builder = new FlatBufferBuilder(8);
+            FlatBufferBuilder builder = CreateMovementBuilder(sentByHost, playerName, pos);
+            Movement.AddObjType(builder, ObjectType.Player);
+            var playerPacketOffset = Movement.EndMovement(builder);
 
-            PlayerRotation.StartPlayerRotation(builder);
-            PlayerRotation.AddObj(builder, builder.CreateString(playerName));
-            var objPosOffset = Vec3.CreateVec3(builder, rot.x, rot.y, rot.z);
-            PlayerRotation.AddRot(builder, objPosOffset);
-            var objPacketOffset = ObjectRotation.EndObjectRotation(builder);
-
-            return GetPacketHolderBytes(builder, objPacketOffset.Value, Packets.ObjectRotation);
+            return GetPacketHolderBytes(builder, playerPacketOffset.Value, Packets.Movement);
         }
 
-        public static byte[] GetPlayerIdsBytes(IEnumerable<CSteamID> playerIds)
+        public static byte[] GetPlayerRotationBytes(bool sentByHost, string playerName, Vector3 rot)
+        {
+            FlatBufferBuilder builder = CreateRotationBuilder(sentByHost, playerName, rot);
+            Rotation.AddObjType(builder, ObjectType.Player);
+            var playerPacketOffset = Rotation.EndRotation(builder);
+
+            return GetPacketHolderBytes(builder, playerPacketOffset.Value, Packets.Rotation);
+        }
+
+        public static byte[] GetPlayerIdsBytes(bool sentByHost, IEnumerable<CSteamID> playerIds)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(16);
-
-            PlayerIds.StartPlayerIds(builder);
             var convertedIds = playerIds.ToList().ConvertAll(item => (ulong) item);
             var idsVector = PlayerIds.CreateIdsVector(builder, convertedIds.ToArray());
+            PlayerIds.StartPlayerIds(builder);
+            PlayerIds.AddSentByHost(builder, sentByHost);
             PlayerIds.AddIds(builder, idsVector);
             var idsOffset = PlayerIds.EndPlayerIds(builder);
 
             return GetPacketHolderBytes(builder, idsOffset.Value, Packets.PlayerIds);
         }
 
-        public static byte[] GetSpawnBytes(string name, ActionType action, Vector3 pos)
+        public static byte[] GetSpawnBytes(bool sentByHost, string name, ActionType action, Vector3 pos)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
+            var nameOffset = builder.CreateString(name);
 
             Spawn.StartSpawn(builder);
-            Spawn.AddName(builder, builder.CreateString(name));
+            Spawn.AddSentByHost(builder, sentByHost);
+            Spawn.AddName(builder, nameOffset);
             Spawn.AddAction(builder, action);
             Spawn.AddPos(builder, Vec3.CreateVec3(builder, pos.x, pos.y, pos.z));
             var spawnOffset = Spawn.EndSpawn(builder);
@@ -121,7 +137,6 @@ namespace NetworkPacket
         public static byte[] GetUserActionBytes(ActionType action)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
-
             UserAction.StartUserAction(builder);
             UserAction.AddAction(builder, action);
             var userActionOffset = UserAction.EndUserAction(builder);
@@ -131,15 +146,14 @@ namespace NetworkPacket
         public static byte[] GetSceneChangeBytes(string sceneName)
         {
             FlatBufferBuilder builder = new FlatBufferBuilder(8);
-
+            var sceneNameOffset = builder.CreateString(sceneName);
             SceneChange.StartSceneChange(builder);
-            SceneChange.AddScene(builder, builder.CreateString(sceneName));
+            SceneChange.AddScene(builder, sceneNameOffset);
             var sceneOffset = SceneChange.EndSceneChange(builder);
 
             return GetPacketHolderBytes(builder, sceneOffset.Value, Packets.SceneChange);
         }
-        
-        
+
 
         private static byte[] GetPacketHolderBytes(FlatBufferBuilder builder, int packetOffset, Packets packetType)
         {

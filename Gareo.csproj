@@ -53,6 +53,9 @@
       <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Lidgren.Network.MultiTarget, Version=2012.1.7.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>Lidgren.Network.MultiTarget.dll</HintPath>
+    </Reference>
     <Reference Include="Steamworks.NET">
       <HintPath>Steamworks.NET.dll</HintPath>
     </Reference>

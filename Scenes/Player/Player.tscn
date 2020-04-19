@@ -9,9 +9,14 @@
 [node name="Player" type="KinematicBody"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.000490069, 0 )
 script = ExtResource( 1 )
+_timerPath = NodePath("TickrateSend")
+
+[node name="TickrateSend" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 2, 0 )
 fov = 85.0
 
 [node name="Collision" type="CollisionShape" parent="."]
@@ -22,3 +27,4 @@ shape = SubResource( 1 )
 transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = null
+[connection signal="timeout" from="TickrateSend" to="." method="_on_TickrateSend_timeout"]

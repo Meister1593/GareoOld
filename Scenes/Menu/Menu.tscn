@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Fonts/Arimo/Arimo-Regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Scenes/Menu/MenuButtons.cs" type="Script" id=2]
+[ext_resource path="res://Scenes/Menu/StartGameButton.cs" type="Script" id=3]
+[ext_resource path="res://Scenes/Menu/ExitGameButton.cs" type="Script" id=4]
 
 [node name="Menu" type="Node"]
 
@@ -9,10 +11,14 @@
 
 [node name="MenuButtons" type="Node" parent="Scripts"]
 script = ExtResource( 2 )
+WorldScenePath = "res://Scenes/Worlds/World1.tscn"
+_startGameButtonPath = NodePath("../../Control/StartGameButton")
+_exitGameButtonPath = NodePath("../../Control/ExitGameButton")
 
 [node name="Control" type="Control" parent="."]
-margin_right = 1280.0
-margin_bottom = 736.0
+anchor_right = 1.0
+anchor_bottom = 1.022
+margin_bottom = 0.159973
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -33,7 +39,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="StartGame" type="Button" parent="Control"]
+[node name="StartGameButton" type="Button" parent="Control"]
 anchor_left = 0.375
 anchor_top = 0.391
 anchor_right = 0.625
@@ -43,23 +49,109 @@ margin_top = 0.223969
 margin_bottom = 0.191986
 custom_fonts/font = ExtResource( 1 )
 text = "Start Game"
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ExitGame" type="Button" parent="Control"]
+[node name="JoinGameButton" type="Button" parent="Control"]
 anchor_left = 0.375
-anchor_top = 0.565
+anchor_top = 0.522
 anchor_right = 0.625
-anchor_bottom = 0.652
+anchor_bottom = 0.609
 margin_left = 3.05176e-05
-margin_top = 0.160004
+margin_top = -0.191986
 margin_right = 6.10352e-05
-margin_bottom = 0.127991
+margin_bottom = -0.223999
 custom_fonts/font = ExtResource( 1 )
-text = "Exit Game"
+text = "Join Game"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="Control/StartGame" to="Scripts/MenuButtons" method="_on_StartGame_pressed"]
-[connection signal="pressed" from="Control/ExitGame" to="Scripts/MenuButtons" method="_on_ExitGame_pressed"]
+
+[node name="ConnectControl" type="Control" parent="Control/JoinGameButton"]
+anchor_left = 1.1
+anchor_top = -1.0
+anchor_right = 2.1
+anchor_bottom = 1.5
+margin_left = -3.05176e-05
+margin_right = -0.00012207
+margin_bottom = -7.62939e-06
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="IpAddressLabel" type="Label" parent="Control/JoinGameButton/ConnectControl"]
+anchor_top = 0.2
+anchor_right = 0.6
+anchor_bottom = 0.4
+margin_left = -3.05176e-05
+margin_top = -3.05176e-05
+margin_bottom = -3.05176e-05
+custom_fonts/font = ExtResource( 1 )
+text = "IP Address"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="IpLineEdit" type="LineEdit" parent="Control/JoinGameButton/ConnectControl"]
+anchor_top = 0.4
+anchor_right = 0.6
+anchor_bottom = 0.6
+margin_left = -3.05176e-05
+margin_top = -3.05176e-05
+margin_bottom = -3.05176e-05
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddressPortLabel" type="Label" parent="Control/JoinGameButton/ConnectControl"]
+anchor_left = 0.7
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.4
+margin_left = -1.52588e-05
+margin_top = -3.05176e-05
+margin_bottom = -3.05176e-05
+custom_fonts/font = ExtResource( 1 )
+text = "Port"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PortLineEdit" type="LineEdit" parent="Control/JoinGameButton/ConnectControl"]
+anchor_left = 0.7
+anchor_top = 0.4
+anchor_right = 1.0
+anchor_bottom = 0.6
+margin_left = -1.52588e-05
+margin_top = -3.05176e-05
+margin_bottom = -3.05176e-05
+
+[node name="ConnectButton" type="Button" parent="Control/JoinGameButton/ConnectControl"]
+anchor_top = 0.6
+anchor_right = 1.0
+anchor_bottom = 0.837
+margin_top = -3.05176e-05
+margin_bottom = 0.0799713
+custom_fonts/font = ExtResource( 1 )
+text = "Connect"
+
+[node name="ExitGameButton" type="Button" parent="Control"]
+anchor_left = 0.375
+anchor_top = 0.652
+anchor_right = 0.625
+anchor_bottom = 0.739
+margin_left = -3.05176e-05
+margin_top = 0.127991
+margin_bottom = 0.0960083
+custom_fonts/font = ExtResource( 1 )
+text = "Exit Game"
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
